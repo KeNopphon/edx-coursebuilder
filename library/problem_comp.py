@@ -38,21 +38,23 @@ class Problem_droplist:
 		wb_prob = xlrd.open_workbook(prob_detail_path)
 		self.sheetstruc = wb_prob.sheet_by_name( info['sheet'])
 		self.n_droplists= (self.sheetstruc.ncols-4)//3
-		self.prob_disp = 0
+		self.main_prob = 0
 		self.prob_weight = 1
 		self.prob_attempt = 2
 		self.prob_hint = 3
 		self.question_col = 4
 		self.choice_col = 5
 		self.ans_col = 6
+		self.display_name = info['display_name']
 		print('number of question is '+str(self.n_droplists))
 		if self.n_droplists is float:
 			print('number of column does not match with number of droplist')
 			exit()
 
-		
-	def display_name(self):
-		return(self.sheetstruc.cell_value(1,self.prob_disp))
+	
+
+	def main_question(self):
+		return(self.sheetstruc.cell_value(1,self.main_prob))
 
 	def hint(self):
 		return(self.sheetstruc.cell_value(1,self.prob_hint))
@@ -76,11 +78,13 @@ class Problem_droplist:
 	
 	def droplists(self,element_obj):
 
+		question_page=etree.SubElement(element_obj,'p')
+		question_page.text = self.main_question()
 		for droplist_idx in range(0,self.n_droplists):
 			print(droplist_idx)
 			q_text = ''
 			a_text = '<optionresponse><optioninput>'
-
+			
 			for row_ in range(1,self.sheetstruc.nrows):
 				tmp = self.sheetstruc.cell_value(row_,self.question_col)
 				if tmp != '':
@@ -121,7 +125,7 @@ class Problem_droplist:
 	def create_file(self,filename,course_path):
 		new_problem_file = os.path.join(course_path,'problem',filename)
 		
-		page = etree.Element('problem', display_name=self.display_name()) 
+		page = etree.Element('problem', display_name = self.display_name)
 		if self.weight() != '':
 			page.set('weight',self.weight())
 		if self.attempt() != '':
@@ -140,21 +144,22 @@ class Problem_multichoice:
 		wb_prob = xlrd.open_workbook(prob_detail_path)
 		self.sheetstruc = wb_prob.sheet_by_name( info['sheet'])
 		self.n_multichoice= (self.sheetstruc.ncols-4)//3
-		self.prob_disp = 0
+		self.main_prob = 0
 		self.prob_weight = 1
 		self.prob_attempt = 2
 		self.prob_hint = 3
 		self.question_col = 4
 		self.multichoice_col = 5
 		self.ans_col = 6
+		self.display_name = info['display_name']
 		print('number of question is '+str(self.n_multichoice))
 		if self.n_multichoice is float:
 			print('number of column does not match with number of droplist')
 			exit()
 
 		
-	def display_name(self):
-		return(self.sheetstruc.cell_value(1,self.prob_disp))
+	def main_question(self):
+		return(self.sheetstruc.cell_value(1,self.main_prob))
 
 	def hint(self):
 		return(self.sheetstruc.cell_value(1,self.prob_hint))
@@ -179,9 +184,11 @@ class Problem_multichoice:
 	def multichoice(self,element_obj):
 
 
-
+		question_page=etree.SubElement(element_obj,'p')
+		question_page.text = self.main_question()
 		for multichoice_idx in range(0,self.n_multichoice):
 			print(multichoice_idx)
+			
 			
 			for row_ in range(1,self.sheetstruc.nrows):
 				tmp = self.sheetstruc.cell_value(row_,self.question_col)
@@ -222,7 +229,7 @@ class Problem_multichoice:
 
 	def create_file(self,filename,course_path):
 		new_problem_file = os.path.join(course_path,'problem',filename)
-		page = etree.Element('problem', display_name=self.display_name()) 
+		page = etree.Element('problem',display_name=self.display_name) 
 		if self.weight() != '':
 			page.set('weight',self.weight())
 		if self.attempt() != '':
@@ -242,21 +249,22 @@ class Problem_checkbox:
 		wb_prob = xlrd.open_workbook(prob_detail_path)
 		self.sheetstruc = wb_prob.sheet_by_name( info['sheet'])
 		self.n_checkbox= (self.sheetstruc.ncols-4)//3
-		self.prob_disp = 0
+		self.main_prob = 0
 		self.prob_weight = 1
 		self.prob_attempt = 2
 		self.prob_hint = 3
 		self.question_col = 4
 		self.checkbox_col = 5
 		self.ans_col = 6
+		self.display_name = info['display_name']
 		print('number of question is '+str(self.n_checkbox))
 		if self.n_checkbox is float:
 			print('number of column does not match with number of droplist')
 			exit()
 
 		
-	def display_name(self):
-		return(self.sheetstruc.cell_value(1,self.prob_disp))
+	def main_question(self):
+		return(self.sheetstruc.cell_value(1,self.main_prob))
 
 	def hint(self):
 		return(self.sheetstruc.cell_value(1,self.prob_hint))
@@ -281,7 +289,8 @@ class Problem_checkbox:
 	def checkbox(self,element_obj):
 
 
-
+		question_page=etree.SubElement(element_obj,'p')
+		question_page.text = self.main_question()
 		for checkboxs_idx in range(0,self.n_checkbox):
 			print(checkboxs_idx)
 			
@@ -325,7 +334,7 @@ class Problem_checkbox:
 	def create_file(self,filename,course_path):
 		new_problem_file = os.path.join(course_path,'problem',filename)
 		
-		page = etree.Element('problem', display_name=self.display_name()) 
+		page = etree.Element('problem',display_name=self.display_name ) 
 		if self.weight() != '':
 			page.set('weight',self.weight())
 		if self.attempt() != '':
@@ -345,21 +354,21 @@ class Problem_fillblank:
 		wb_prob = xlrd.open_workbook(prob_detail_path)
 		self.sheetstruc = wb_prob.sheet_by_name( info['sheet'])
 		self.n_fillblank= (self.sheetstruc.ncols-4)//2
-		self.prob_disp = 0
+		self.main_prob = 0
 		self.prob_weight = 1
 		self.prob_attempt = 2
 		self.prob_hint = 3
 		self.question_col = 4
 		self.ans_col = 5
-
+		self.display_name = info['display_name']
 		print('number of question is '+str(self.n_fillblank))
 		if self.n_fillblank is float:
 			print('number of column does not match with number of droplist')
 			exit()
 
 		
-	def display_name(self):
-		return(self.sheetstruc.cell_value(1,self.prob_disp))
+	def main_question(self):
+		return(self.sheetstruc.cell_value(1,self.main_prob))
 
 	def hint(self):
 		return(self.sheetstruc.cell_value(1,self.prob_hint))
@@ -384,7 +393,8 @@ class Problem_fillblank:
 	def fillblank(self,element_obj):
 
 
-
+		question_page=etree.SubElement(element_obj,'p')
+		question_page.text = self.main_question()
 		for fillblank_idx in range(0,self.n_fillblank):
 			print(fillblank_idx)
 			
@@ -414,7 +424,7 @@ class Problem_fillblank:
 
 	def create_file(self,filename,course_path):
 		new_problem_file = os.path.join(course_path,'problem',filename)
-		page = etree.Element('problem', display_name=self.display_name()) 
+		page = etree.Element('problem',display_name=self.display_name ) 
 		if self.weight() != '':
 			page.set('weight',self.weight())
 		if self.attempt() != '':
@@ -442,6 +452,7 @@ def problem_excel2list(row,sheetproblem):
 	problem_subsection = sheetproblem.cell_value(row,PROBLEMSUBSECTION)
 	problem_unit = sheetproblem.cell_value(row,PROBLEMUNIT)
 	problem_dir = sheetproblem.cell_value(row,PROBLEMDIR)
+	problem_displayname = sheetproblem.cell_value(row,PROBLEMDISPLAYNAME)
 	problem_name = sheetproblem.cell_value(row,PROBLEMNAME)
 	problem_sheet = sheetproblem.cell_value(row,PROBLEMSHEETNAME)
 	problem_type = sheetproblem.cell_value(row,PROBLEMTYPE)
@@ -450,6 +461,7 @@ def problem_excel2list(row,sheetproblem):
 		'section':problem_section,
 		'subsection':problem_subsection,
 		'unit':problem_unit,
+		'display_name': problem_displayname,
 		'dir':problem_dir,
 		'filename':problem_name,
 		'sheet':problem_sheet,
